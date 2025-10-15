@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 LibrEr - Biblioteca Digital</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fdf6e3 0%, #faf0e6 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #5d4037;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .header {
+            background: linear-gradient(135deg, #d7ccc8 0%, #bcaaa4 100%);
+            color: #4e342e;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.1"><text x="50%" y="50%" font-size="30" text-anchor="middle" dominant-baseline="middle">📚</text></svg>');
+            background-size: 100px 100px;
+        }
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.8;
+            position: relative;
+        }
+        .nav {
+            background: #a1887f;
+            padding: 18px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: 500;
+        }
+        .nav a:hover {
+            background: #8d6e63;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .content {
+            padding: 40px;
+            min-height: 500px;
+        }
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .book-card {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            transition: all 0.4s ease;
+            border: 1px solid #ffd54f;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .book-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ffb74d, #ff9800);
+        }
+        .book-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        .book-icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.1));
+        }
+        .book-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #5d4037;
+            line-height: 1.4;
+        }
+        .book-author {
+            color: #8d6e63;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .book-size {
+            color: #78909c;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+        .book-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #ffb74d 0%, #ff9800 100%);
+            color: white;
+            box-shadow: 0 4px 10px rgba(255, 152, 0, 0.3);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #a5d6a7 0%, #66bb6a 100%);
+            color: white;
+            box-shadow: 0 4px 10px rgba(102, 187, 106, 0.3);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+        .upload-section {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            padding: 35px;
+            border-radius: 15px;
+            margin: 40px 0;
+            text-align: center;
+            border: 2px dashed #81c784;
+        }
+        .upload-section h2 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #d7ccc8 0%, #bcaaa4 100%);
+            color: #4e342e;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-number {
+            font-size: 2.8em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .footer {
+            background: #8d6e63;
+            color: white;
+            text-align: center;
+            padding: 25px;
+            margin-top: 50px;
+        }
+        .file-input-container {
+            position: relative;
+            display: inline-block;
+            margin: 20px 0;
+        }
+        .file-input-container input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        .file-input-label {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #81c784 0%, #4caf50 100%);
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+            transition: all 0.3s ease;
+        }
+        .file-input-label:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
+        }
+        #uploadStatus {
+            margin-top: 20px;
+            min-height: 30px;
+            font-weight: 600;
+        }
+        .section-title {
+            font-size: 2em;
+            color: #5d4037;
+            margin-bottom: 25px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #ffb74d, #ff9800);
+            border-radius: 2px;
+        }
+        @media (max-width: 768px) {
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+            }
+            .nav {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            .content {
+                padding: 25px;
+            }
+            .header h1 {
+                font-size: 2.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 LibrEr - Biblioteca Digital</h1>
+            <p>Tu espacio personal para explorar y compartir libros</p>
+        </div>
+
+        <div class="nav">
+            <a href="#inicio">🏠 Inicio</a>
+            <a href="#libros">📖 Biblioteca</a>
+            <a href="#subir">📤 Subir Libro</a>
+            <a href="#admin">⚙️ Administración</a>
+        </div>
+
+        <div class="content">
+            <!-- Sección de Estadísticas -->
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalBooks">0</div>
+                    <div>Libros en Biblioteca</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalSize">0 MB</div>
+                    <div>Espacio Utilizado</div>
+                </div>
+            </div>
+
+            <!-- Sección de Upload -->
+            <div class="upload-section" id="subir">
+                <h2>📤 Agregar Nuevo Libro</h2>
+                <p>Comparte PDFs con la comunidad</p>
+                <div class="file-input-container">
+                    <div class="file-input-label">
+                        📄 Seleccionar Archivo PDF
+                    </div>
+                    <input type="file" id="fileInput" accept=".pdf">
+                </div>
+                <br>
+                <button class="btn btn-success" onclick="uploadFile()">Subir a la Biblioteca</button>
+                <div id="uploadStatus"></div>
+            </div>
+
+            <!-- Grid de Libros -->
+            <h2 class="section-title">📚 Nuestra Colección</h2>
+            <div class="books-grid" id="booksGrid">
+                <div class="book-card">
+                    <div class="book-icon">📖</div>
+                    <div class="book-title">Cargando biblioteca...</div>
+                    <div class="book-author">LibrEr Digital</div>
+                    <div class="book-actions">
+                        <button class="btn btn-primary" disabled>Explorar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>📚 LibrEr - Biblioteca Digital | Proyecto de Streaming de Libros</p>
+            <p>✨ Sistema funcionando correctamente | Acceso remoto activo</p>
+        </div>
+    </div>
+
+    <script>
+        // Configuración - FUNCIONA DESDE CUALQUIER MÁQUINA
+        function getApiUrl() {
+            const hostname = window.location.hostname;
+            return `http://${hostname}:5000`;
+        }
+
+        function getBooksBaseUrl() {
+            return window.location.origin + '/libros';
+        }
+
+        // Cargar estadísticas
+        async function loadStats() {
+            try {
+                const apiUrl = getApiUrl();
+                const response = await fetch(`${apiUrl}/api/stats`);
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const stats = await response.json();
+                document.getElementById('totalBooks').textContent = stats.totalBooks;
+                document.getElementById('totalSize').textContent = stats.totalSize + ' MB';
+            } catch (error) {
+                console.error('Error cargando estadísticas:', error);
+                document.getElementById('totalBooks').textContent = '?';
+                document.getElementById('totalSize').textContent = 'Error';
+            }
+        }
+
+        // Cargar libros - CORREGIDO
+        async function loadBooks() {
+            try {
+                const apiUrl = getApiUrl();
+                const response = await fetch(`${apiUrl}/api/books`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const books = await response.json();
+                const grid = document.getElementById('booksGrid');
+                grid.innerHTML = '';
+                
+                if (books.length === 0) {
+                    grid.innerHTML = `
+                        <div class="book-card" style="grid-column: 1 / -1;">
+                            <div class="book-icon">📚</div>
+                            <div class="book-title">La biblioteca está vacía</div>
+                            <div class="book-author">Sé el primero en subir un libro</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                books.forEach(book => {
+                    const bookCard = document.createElement('div');
+                    bookCard.className = 'book-card';
+                    
+                    // ✅ URL CORRECTA para los libros
+                    const bookUrl = `${getBooksBaseUrl()}/${book.filename}`;
+                    
+                    bookCard.innerHTML = `
+                        <div class="book-icon">📚</div>
+                        <div class="book-title">${book.title}</div>
+                        <div class="book-author">${book.author || 'Autor no especificado'}</div>
+                        <div class="book-size">${book.size} MB</div>
+                        <div class="book-actions">
+                            <a href="${bookUrl}" class="btn btn-primary" target="_blank">Leer</a>
+                            <button class="btn" onclick="showBookInfo('${book.filename}', '${book.title.replace(/'/g, "\\'")}', '${book.size}')">Detalles</button>
+                        </div>
+                    `;
+                    grid.appendChild(bookCard);
+                });
+            } catch (error) {
+                console.error('Error cargando libros:', error);
+                document.getElementById('booksGrid').innerHTML = `
+                    <div class="book-card" style="grid-column: 1 / -1;">
+                        <div class="book-title">❌ Error cargando la biblioteca</div>
+                        <div class="book-author">No se pudo conectar al servidor</div>
+                        <div class="book-actions">
+                            <button class="btn" onclick="loadBooks()">Reintentar</button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Subir archivo
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const status = document.getElementById('uploadStatus');
+            
+            if (!fileInput.files[0]) {
+                status.innerHTML = '<div style="color: #d32f2f;">❌ Por favor, selecciona un archivo PDF</div>';
+                return;
+            }
+
+            const file = fileInput.files[0];
+            if (file.type !== 'application/pdf') {
+                status.innerHTML = '<div style="color: #d32f2f;">❌ Solo se permiten archivos PDF</div>';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('pdf', file);
+
+            status.innerHTML = '<div style="color: #1976d2;">📤 Subiendo archivo a la biblioteca...</div>';
+
+            try {
+                const apiUrl = getApiUrl();
+                const response = await fetch(`${apiUrl}/api/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    status.innerHTML = `<div style="color: #388e3c;">✅ ${result.message}</div>`;
+                    fileInput.value = '';
+                    document.querySelector('.file-input-label').textContent = '📄 Seleccionar Archivo PDF';
+                    
+                    setTimeout(() => {
+                        loadBooks();
+                        loadStats();
+                    }, 1000);
+                    
+                    setTimeout(() => {
+                        status.innerHTML = '';
+                    }, 5000);
+                } else {
+                    status.innerHTML = `<div style="color: #d32f2f;">❌ ${result.message}</div>`;
+                }
+            } catch (error) {
+                console.error('Error subiendo archivo:', error);
+                status.innerHTML = `<div style="color: #d32f2f;">❌ Error de conexión</div>`;
+            }
+        }
+
+        function showBookInfo(filename, title, size) {
+            const info = `
+📚 ${title}
+
+• Archivo: ${filename}
+• Tamaño: ${size} MB
+• Formato: PDF
+
+Haz clic en "Leer" para abrir el libro en una nueva pestaña.
+            `;
+            alert(info);
+        }
+
+        // Cargar todo al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 LibrEr - Sistema funcionando correctamente');
+            console.log('📍 Servidor:', window.location.hostname);
+            
+            loadStats();
+            loadBooks();
+            
+            document.getElementById('fileInput').addEventListener('change', function(e) {
+                const fileName = e.target.files[0] ? e.target.files[0].name : 'Ningún archivo seleccionado';
+                document.querySelector('.file-input-label').textContent = `📄 ${fileName}`;
+            });
+        });
+    </script>
+</body>
+</html>

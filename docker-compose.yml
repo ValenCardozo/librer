@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # Servidor Web Principal - Biblioteca
+  library-web:
+    image: httpd:latest
+    container_name: library-web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./library-web:/usr/local/apache2/htdocs
+      - ./libros:/usr/local/apache2/htdocs/libros
+    restart: unless-stopped
+
+  upload-server:
+    build: ./upload-server
+    container_name: upload-server
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./libros:/app/libros
+      - ./upload-server/uploads:/app/uploads
+      - ./biblioteca-data:/app/data
+    restart: unless-stopped
+
+  # Panel de Administración
+  admin-panel:
+    build: ./admin-panel
+    container_name: admin-panel
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./libros:/app/libros
+      - ./biblioteca-data:/app/data
+    restart: unless-stopped
+
+  # Monitor del Sistema
+  monitor:
+    image: louislam/uptime-kuma
+    container_name: monitor-biblioteca
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./monitor-data:/app/data
+    restart: unless-stopped
