@@ -53,29 +53,31 @@ function initDB() {
     }
 }
 
-// 🎯 ENDPOINT: Subir PDF
 app.post('/api/upload', upload.single('pdf'), (req, res) => {
     try {
         if (!req.file) {
             return res.json({ success: false, message: 'No se seleccionó ningún archivo' });
         }
 
+        const customTitle = req.body.title || req.file.originalname.replace('.pdf', '');
+        const customAuthor = req.body.author || '';
+
         const bookInfo = {
             id: Date.now().toString(),
             filename: req.file.filename,
             originalName: req.file.originalname,
-            title: req.file.originalname.replace('.pdf', ''),
+            title: customTitle,
+            author: customAuthor,
             size: (req.file.size / (1024 * 1024)).toFixed(2), // MB
             uploadDate: new Date().toISOString(),
             path: `/libros/${req.file.filename}`
         };
 
-        // Guardar en base de datos
         const books = JSON.parse(fs.readFileSync(DB_FILE));
         books.push(bookInfo);
         fs.writeFileSync(DB_FILE, JSON.stringify(books, null, 2));
 
-        console.log(`📚 Nuevo libro subido: ${bookInfo.title}`);
+        console.log(`📚 Nuevo libro subido: "${bookInfo.title}" por ${bookInfo.author || 'Autor no especificado'}`);
 
         res.json({
             success: true,
